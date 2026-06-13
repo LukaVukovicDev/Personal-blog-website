@@ -1,0 +1,150 @@
+<main>
+  <article>
+    <section class="section posts-page" aria-labelledby="posts-label">
+      <div class="container">
+        <h1 class="headline headline-2 section-title" id="posts-label">
+          <span class="span">Svi postovi</span>
+        </h1>
+
+        <p class="section-text">Pretraži postove ili filtriraj po kategoriji i tagu.</p>
+
+        <form class="posts-filters" (ngSubmit)="applyFilters()">
+          <input
+            type="search"
+            name="search"
+            class="posts-filter-input"
+            placeholder="Pretraga po naslovu i sadržaju..."
+            [(ngModel)]="search"
+          />
+
+          <select
+            name="category"
+            class="posts-filter-select"
+            [(ngModel)]="selectedCategory"
+            (change)="applyFilters()"
+          >
+            <option value="">Sve kategorije</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.slug">{{ category.name }}</option>
+            }
+          </select>
+
+          <select
+            name="tag"
+            class="posts-filter-select"
+            [(ngModel)]="selectedTag"
+            (change)="applyFilters()"
+          >
+            <option value="">Svi tagovi</option>
+            @for (tag of tags(); track tag.slug) {
+              <option [value]="tag.slug">#{{ tag.name }}</option>
+            }
+          </select>
+
+          <button type="submit" class="btn btn-primary">Pretraži</button>
+        </form>
+
+        @if (error()) {
+          <p class="card-text">{{ error() }}</p>
+        } @else if (loading()) {
+          <p class="card-text">Učitavanje postova...</p>
+        } @else if (posts().length === 0) {
+          <p class="card-text">Nema postova koji odgovaraju pretrazi.</p>
+        } @else {
+          <p class="posts-count">{{ totalCount() }} {{ totalCount() === 1 ? 'post' : 'postova' }}</p>
+
+          <ul class="grid-list posts-grid">
+            @for (post of posts(); track post.id) {
+              <li>
+                <div class="card feature-card">
+                  <figure class="card-banner img-holder" style="--width: 1602; --height: 903;">
+                    <img
+                      [src]="post.coverImageUrl || 'assets/images/cybersec.png'"
+                      width="1602"
+                      height="903"
+                      loading="lazy"
+                      [alt]="post.title"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <div class="card-wrapper">
+                      <div class="card-tag">
+                        @if (post.categoryName) {
+                          <a class="card-badge">{{ post.categoryName }}</a>
+                        }
+                      </div>
+
+                      <div class="wrapper">
+                        <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                        <span class="span">{{ post.readMinutes }} min read</span>
+                      </div>
+                    </div>
+
+                    <h3 class="headline headline-3 card-title">
+                      <a [routerLink]="['/post', post.slug]" class="link hover-2">{{ post.title }}</a>
+                    </h3>
+
+                    <p class="card-text">{{ post.excerpt }}</p>
+
+                    <div class="card-wrapper">
+                      <div class="card-tag">
+                        @for (tag of post.tags; track tag.slug) {
+                          <a class="span hover-2">#{{ tag.name }}</a>
+                        }
+                      </div>
+
+                      <span class="span">{{ post.publishedAt | date: 'dd MMM yyyy' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+
+          @if (totalPages() > 1) {
+            <ul class="pagination">
+              <li>
+                <button
+                  type="button"
+                  class="pagination-btn"
+                  [disabled]="page() <= 1"
+                  (click)="goToPage(page() - 1)"
+                  aria-label="Prethodna strana"
+                >
+                  <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </li>
+
+              @for (number of pageNumbers(); track number) {
+                <li>
+                  <button
+                    type="button"
+                    class="pagination-btn"
+                    [class.active]="number === page()"
+                    (click)="goToPage(number)"
+                  >
+                    {{ number }}
+                  </button>
+                </li>
+              }
+
+              <li>
+                <button
+                  type="button"
+                  class="pagination-btn"
+                  [disabled]="page() >= totalPages()"
+                  (click)="goToPage(page() + 1)"
+                  aria-label="Sledeća strana"
+                >
+                  <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </li>
+            </ul>
+          }
+        }
+      </div>
+    </section>
+  </article>
+</main>

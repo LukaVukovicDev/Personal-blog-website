@@ -1,0 +1,75 @@
+<main>
+  <article>
+    @if (loading()) {
+      <div class="article-body">
+        <p class="article-status">Učitavanje…</p>
+      </div>
+    } @else if (notFound() || !post()) {
+      <div class="article-body not-found">
+        <h2 class="article-title">Post nije pronađen</h2>
+        <p>Žao nam je, ovaj post ne postoji. <a routerLink="/">Nazad na početnu</a>.</p>
+      </div>
+    } @else {
+      <div class="article-body">
+        <h2 class="article-title">{{ post()!.title }}</h2>
+
+        <p class="article-meta">
+          {{ post()!.authorName }}
+          @if (post()!.publishedAt) {
+            · {{ post()!.publishedAt | date: 'longDate' }}
+          }
+          · {{ post()!.readMinutes }} min čitanja · {{ post()!.viewCount }} pregleda
+        </p>
+
+        @if (post()!.categoryName || post()!.tags.length) {
+          <p class="article-tags">
+            @if (post()!.categoryName) {
+              <span class="article-badge">{{ post()!.categoryName }}</span>
+            }
+            @for (tag of post()!.tags; track tag.slug) {
+              <span class="article-tag">#{{ tag.name }}</span>
+            }
+          </p>
+        }
+
+        <div class="article-content" [innerHTML]="safeContent()"></div>
+
+        <section class="comments">
+          <h3 class="comments-title">Komentari ({{ comments().length }})</h3>
+
+          @if (auth.isAuthenticated()) {
+            @if (commentSubmitted()) {
+              <p class="comment-note">Hvala! Komentar je poslat i čeka odobrenje moderatora.</p>
+            }
+            <form class="comment-form" (ngSubmit)="submitComment()">
+              <textarea
+                name="commentBody"
+                [(ngModel)]="commentBody"
+                rows="3"
+                placeholder="Napiši komentar…"
+                required
+              ></textarea>
+              <button type="submit" class="comment-submit" [disabled]="submitting()">
+                {{ submitting() ? 'Slanje…' : 'Pošalji komentar' }}
+              </button>
+            </form>
+          } @else {
+            <p class="comment-login"><a routerLink="/login">Prijavi se</a> da ostaviš komentar.</p>
+          }
+
+          @for (comment of comments(); track comment.id) {
+            <div class="comment">
+              <p class="comment-head">
+                <span class="comment-author">{{ comment.authorName }}</span>
+                <time class="comment-date">{{ comment.createdAt | date: 'short' }}</time>
+              </p>
+              <p class="comment-body">{{ comment.body }}</p>
+            </div>
+          } @empty {
+            <p class="comments-empty">Još nema odobrenih komentara. Budi prvi!</p>
+          }
+        </section>
+      </div>
+    }
+  </article>
+</main>

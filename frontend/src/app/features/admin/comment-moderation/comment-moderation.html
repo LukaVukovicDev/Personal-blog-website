@@ -1,0 +1,79 @@
+<section class="admin-section">
+  <header class="admin-section-header">
+    <h1 class="admin-title">Komentari</h1>
+  </header>
+
+  <div class="admin-filters">
+    @for (filter of filters; track filter.label) {
+      <button
+        type="button"
+        class="admin-btn admin-btn-sm"
+        [class.admin-btn-primary]="activeFilter() === filter.value"
+        (click)="setFilter(filter.value)"
+      >
+        {{ filter.label }}
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="admin-error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="admin-text">Učitavanje...</p>
+  } @else if (comments().length === 0) {
+    <p class="admin-text">Nema komentara za prikaz.</p>
+  } @else {
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Komentar</th>
+            <th>Autor</th>
+            <th>Post</th>
+            <th>Status</th>
+            <th>Datum</th>
+            <th class="admin-table-actions">Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (comment of comments(); track comment.id) {
+            <tr>
+              <td class="admin-comment-body">{{ comment.body }}</td>
+              <td>{{ comment.authorName }}</td>
+              <td>
+                <a [routerLink]="['/post', comment.postSlug]" class="admin-link">{{ comment.postTitle }}</a>
+              </td>
+              <td>
+                <span
+                  class="admin-badge"
+                  [class.admin-badge-published]="comment.status === 'Approved'"
+                  [class.admin-badge-danger]="comment.status === 'Spam'"
+                >
+                  {{ comment.status }}
+                </span>
+              </td>
+              <td>{{ comment.createdAt | date: 'dd.MM.yyyy HH:mm' }}</td>
+              <td class="admin-table-actions">
+                @if (comment.status !== 'Approved') {
+                  <button type="button" class="admin-btn admin-btn-sm admin-btn-success" (click)="approve(comment)">
+                    Odobri
+                  </button>
+                }
+
+                @if (comment.status !== 'Spam') {
+                  <button type="button" class="admin-btn admin-btn-sm" (click)="markSpam(comment)">Spam</button>
+                }
+
+                <button type="button" class="admin-btn admin-btn-sm admin-btn-danger" (click)="deleteComment(comment)">
+                  Obriši
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

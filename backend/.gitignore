@@ -1,0 +1,9 @@
+# Build izlaz
+bin/
+obj/
+
+# Lokalne tajne (connection string, JWT secret) — NE ide u git
+appsettings.Local.json
+
+# User-specific
+*.user

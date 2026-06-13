@@ -1,0 +1,245 @@
+<main>
+  <article>
+    <!-- #HERO -->
+    <section class="hero" id="home" aria-label="home">
+      <div class="container">
+        <div class="hero-content">
+          <p class="hero-subtitle">Hello!</p>
+
+          <h1 class="headline headline-1 section-title">
+            I'm <span class="span">Luka Vukovic</span>
+          </h1>
+
+          <p class="hero-text">Blog about my IT journey.</p>
+        </div>
+
+        <div class="hero-banner">
+          <img src="assets/images/pattern-2.svg" width="27" height="26" alt="shape" class="shape shape-1" />
+          <img src="assets/images/pattern-3.svg" width="27" height="26" alt="shape" class="shape shape-2" />
+        </div>
+
+        <img src="assets/images/shadow-1.svg" width="500" height="800" alt="" class="hero-bg hero-bg-1" />
+        <img src="assets/images/shadow-2.svg" width="500" height="500" alt="" class="hero-bg hero-bg-2" />
+      </div>
+    </section>
+
+    <!-- #TOPICS (dekorativni slider) -->
+    <section class="topics" id="topics" aria-labelledby="topic-label">
+      <div class="container">
+        <div class="card topic-card">
+          <div class="card-content">
+            <h2 class="headline headline-2 section-title card-title" id="topic-label">Posts about...</h2>
+
+            <p class="card-text">Cybersecurity, Artificial Inteligence, Web Development...</p>
+
+            <div class="btn-group">
+              <button class="btn-icon" aria-label="previous" (click)="prev()">
+                <ion-icon name="arrow-back" aria-hidden="true"></ion-icon>
+              </button>
+
+              <button class="btn-icon" aria-label="next" (click)="next()">
+                <ion-icon name="arrow-forward" aria-hidden="true"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="slider" #slider>
+            <ul class="slider-list" #sliderContainer>
+              @for (topic of topics; track topic.title) {
+                <li class="slider-item">
+                  <a routerLink="/" fragment="featured" class="slider-card">
+                    <figure class="slider-banner img-holder" style="--width: 507; --height: 618;">
+                      <img [src]="topic.img" width="507" height="618" loading="lazy" [alt]="topic.alt" class="img-cover" />
+                    </figure>
+
+                    <div class="slider-content">
+                      <span class="slider-title">{{ topic.title }}</span>
+                    </div>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- #FEATURED POSTS (iz baze) -->
+    <section class="section feature" aria-label="feature" id="featured">
+      <div class="container">
+        <h2 class="headline headline-2 section-title">
+          <span class="span">Posts</span>
+        </h2>
+
+        <p class="section-text"></p>
+
+        @if (loading()) {
+          <p class="card-text">Učitavanje postova...</p>
+        } @else if (featured().length === 0) {
+          <p class="card-text">Još nema objavljenih postova.</p>
+        }
+
+        <ul class="feature-list">
+          @for (post of featured(); track post.id) {
+            <li>
+              <div class="card feature-card">
+                <figure class="card-banner img-holder" style="--width: 1602; --height: 903;">
+                  <img
+                    [src]="post.coverImageUrl || 'assets/images/cybersec.png'"
+                    width="1602"
+                    height="903"
+                    loading="lazy"
+                    [alt]="post.title"
+                    class="img-cover"
+                  />
+                </figure>
+
+                <div class="card-content">
+                  <div class="card-wrapper">
+                    <div class="card-tag">
+                      @for (tag of post.tags; track tag.slug) {
+                        <a class="span hover-2">#{{ tag.name }}</a>
+                      }
+                    </div>
+
+                    <div class="wrapper">
+                      <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                      <span class="span">{{ post.readMinutes }} min read</span>
+                    </div>
+                  </div>
+
+                  <h3 class="headline headline-3">
+                    <a [routerLink]="['/post', post.slug]" class="card-title hover-2">{{ post.title }}</a>
+                  </h3>
+
+                  <div class="card-wrapper">
+                    <div class="profile-card">
+                      <img src="assets/images/cybersec.png" width="48" height="48" loading="lazy" alt="Luka Vukovic" class="profile-banner" />
+
+                      <div>
+                        <p class="card-title">{{ post.authorName }}</p>
+                        <p class="card-subtitle">{{ post.publishedAt | date: 'dd MMM yyyy' }}</p>
+                      </div>
+                    </div>
+
+                    <a [routerLink]="['/post', post.slug]" class="card-btn">Read more</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <img src="assets/images/shadow-3.svg" width="500" height="1500" loading="lazy" alt="" class="feature-bg" />
+    </section>
+
+    <!-- #POPULAR TAGS (dekorativni) -->
+    <section class="tags" aria-labelledby="tag-label">
+      <div class="container">
+        <h2 class="headline headline-2 section-title" id="tag-label">
+          <span class="span">Tags</span>
+        </h2>
+
+        <p class="section-text"></p>
+
+        <ul class="grid-list">
+          @for (tag of tags; track tag.label) {
+            <li>
+              <button class="card tag-btn">
+                <img [src]="tag.img" width="32" height="32" loading="lazy" [alt]="tag.label" />
+                <p class="btn-text">{{ tag.label }}</p>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- #RECENT POSTS (iz baze) -->
+    <section class="section recent-post" id="recent" aria-labelledby="recent-label">
+      <div class="container">
+        <div class="post-main">
+          <h2 class="headline headline-2 section-title">
+            <span class="span">Recent posts</span>
+          </h2>
+
+          <p class="section-text"></p>
+
+          <ul class="grid-list">
+            @for (post of recent(); track post.id) {
+              <li>
+                <div class="recent-post-card">
+                  <figure class="card-banner img-holder" style="--width: 271; --height: 258;">
+                    <img
+                      [src]="post.coverImageUrl || 'assets/images/cybersec.png'"
+                      width="271"
+                      height="258"
+                      loading="lazy"
+                      [alt]="post.title"
+                      class="img-cover"
+                    />
+                  </figure>
+
+                  <div class="card-content">
+                    <a class="card-badge">{{ post.categoryName || 'Post' }}</a>
+
+                    <h3 class="headline headline-3 card-title">
+                      <a [routerLink]="['/post', post.slug]" class="link hover-2">{{ post.title }}</a>
+                    </h3>
+
+                    <p class="card-text">{{ post.excerpt }}</p>
+
+                    <div class="card-wrapper">
+                      <div class="card-tag">
+                        @for (tag of post.tags; track tag.slug) {
+                          <a class="span hover-2">#{{ tag.name }}</a>
+                        }
+                      </div>
+
+                      <div class="wrapper">
+                        <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                        <span class="span">{{ post.readMinutes }} min read</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="post-aside grid-list">
+          <div class="card aside-card">
+            <h3 class="headline headline-2 aside-title">
+              <span class="span">Posts</span>
+            </h3>
+
+            <ul class="popular-list">
+              @for (post of popular; track post.title) {
+                <li>
+                  <div class="popular-card">
+                    <figure class="card-banner img-holder" style="--width: 64; --height: 64;">
+                      <img [src]="post.img" width="64" height="64" loading="lazy" [alt]="post.alt" class="img-cover" />
+                    </figure>
+
+                    <div class="card-content">
+                      <h4 class="headline headline-4 card-title">
+                        <span class="link">{{ post.title }}</span>
+                      </h4>
+
+                      <div class="warpper">
+                        <p class="card-subtitle">{{ post.read }}</p>
+                        <time class="publish-date" [attr.datetime]="post.datetime">{{ post.date }}</time>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </article>
+</main>

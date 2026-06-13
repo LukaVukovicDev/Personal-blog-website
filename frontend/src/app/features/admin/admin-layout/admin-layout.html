@@ -1,0 +1,39 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <a routerLink="/" class="admin-brand-link">Luka Vukovic</a>
+      <span class="admin-brand-tag">Admin panel</span>
+    </div>
+
+    <nav class="admin-nav">
+      <a routerLink="/admin/posts" routerLinkActive="active" class="admin-nav-link">
+        <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+        <span>Postovi</span>
+      </a>
+
+      @if (auth.isAdmin()) {
+        <a routerLink="/admin/categories" routerLinkActive="active" class="admin-nav-link">
+          <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
+          <span>Kategorije</span>
+        </a>
+
+        <a routerLink="/admin/comments" routerLinkActive="active" class="admin-nav-link">
+          <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon>
+          <span>Komentari</span>
+        </a>
+      }
+    </nav>
+
+    <div class="admin-user">
+      <p class="admin-user-name">{{ auth.currentUser()?.displayName }}</p>
+      <p class="admin-user-role">{{ auth.currentUser()?.role }}</p>
+
+      <a routerLink="/" class="admin-back-link">← Nazad na sajt</a>
+      <button type="button" class="admin-logout-btn" (click)="logout()">Odjavi se</button>
+    </div>
+  </aside>
+
+  <main class="admin-content">
+    <router-outlet />
+  </main>
+</div>

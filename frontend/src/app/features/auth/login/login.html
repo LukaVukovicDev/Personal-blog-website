@@ -1,0 +1,25 @@
+<main class="auth-page">
+  <form class="auth-card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1 class="auth-title">Prijava</h1>
+
+    @if (error()) {
+      <p class="auth-error">{{ error() }}</p>
+    }
+
+    <label class="auth-field">
+      <span>Korisničko ime ili email</span>
+      <input type="text" formControlName="usernameOrEmail" autocomplete="username" />
+    </label>
+
+    <label class="auth-field">
+      <span>Lozinka</span>
+      <input type="password" formControlName="password" autocomplete="current-password" />
+    </label>
+
+    <button class="auth-btn" type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Prijavljivanje…' : 'Prijavi se' }}
+    </button>
+
+    <p class="auth-alt">Nemaš nalog? <a routerLink="/register">Registruj se</a></p>
+  </form>
+</main>

@@ -1,0 +1,52 @@
+<section class="admin-section">
+  <header class="admin-section-header">
+    <h1 class="admin-title">Kategorije</h1>
+  </header>
+
+  @if (error()) {
+    <p class="admin-error">{{ error() }}</p>
+  }
+
+  <form class="admin-form admin-form-inline" [formGroup]="form" (ngSubmit)="submit()">
+    <label class="admin-field">
+      <span>Naziv</span>
+      <input type="text" formControlName="name" placeholder="npr. DevOps" />
+    </label>
+
+    <label class="admin-field">
+      <span>Opis (opciono)</span>
+      <input type="text" formControlName="description" placeholder="Kratak opis kategorije" />
+    </label>
+
+    <button type="submit" class="admin-btn admin-btn-primary" [disabled]="submitting()">
+      {{ submitting() ? 'Dodavanje…' : '+ Dodaj kategoriju' }}
+    </button>
+  </form>
+
+  @if (loading()) {
+    <p class="admin-text">Učitavanje...</p>
+  } @else if (categories().length === 0) {
+    <p class="admin-text">Nema kategorija.</p>
+  } @else {
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Naziv</th>
+            <th>Slug</th>
+            <th>Opis</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of categories(); track category.id) {
+            <tr>
+              <td>{{ category.name }}</td>
+              <td>{{ category.slug }}</td>
+              <td>{{ category.description ?? '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

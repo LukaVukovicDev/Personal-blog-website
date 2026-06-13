@@ -1,0 +1,103 @@
+<header class="header" [class.active]="scrolled()">
+  <div class="container">
+    <a routerLink="/" fragment="home" class="logo">
+      <img src="assets/images/lukavukoviclogo-removebg-preview.png" width="119" height="37" alt="LV logo" />
+    </a>
+
+    <nav class="navbar" [class.active]="navActive()">
+      <div class="navbar-top">
+        <a routerLink="/" fragment="home" class="logo" (click)="closeNav()">
+          <img src="assets/images/lukavukoviclogo-removebg-preview.png" width="119" height="37" alt="LV logo" />
+        </a>
+
+        <button class="nav-close-btn" aria-label="close menu" (click)="closeNav()">
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+
+      <ul class="navbar-list">
+        <li>
+          <a routerLink="/" fragment="home" class="navbar-link hover-1" (click)="closeNav()">Home</a>
+        </li>
+        <li>
+          <a routerLink="/" fragment="topics" class="navbar-link hover-1" (click)="closeNav()">Topics</a>
+        </li>
+        <li>
+          <a routerLink="/" fragment="featured" class="navbar-link hover-1" (click)="closeNav()">Featured Post</a>
+        </li>
+        <li>
+          <a routerLink="/" fragment="recent" class="navbar-link hover-1" (click)="closeNav()">Recent Post</a>
+        </li>
+        <li>
+          <a routerLink="/posts" class="navbar-link hover-1" (click)="closeNav()">All Posts</a>
+        </li>
+        <li>
+          <a routerLink="/" fragment="container123" class="navbar-link hover-1" (click)="closeNav()">Contact</a>
+        </li>
+
+        @if (auth.isAuthenticated()) {
+          @if (auth.isAuthor()) {
+            <li>
+              <a routerLink="/admin" class="navbar-link hover-1" (click)="closeNav()">Admin</a>
+            </li>
+          }
+          <li class="navbar-notifications">
+            <button
+              type="button"
+              class="notification-btn"
+              aria-label="Notifikacije"
+              (click)="toggleNotifications()"
+            >
+              <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
+              @if (notifications.unreadCount() > 0) {
+                <span class="notification-badge">{{ notifications.unreadCount() }}</span>
+              }
+            </button>
+
+            @if (notificationsOpen()) {
+              <div class="notification-dropdown">
+                <h4 class="notification-dropdown-title">Notifikacije</h4>
+
+                @if (notifications.notifications().length === 0) {
+                  <p class="notification-empty">Nema notifikacija.</p>
+                } @else {
+                  <ul class="notification-list">
+                    @for (item of notifications.notifications(); track item.id) {
+                      <li [class.unread]="!item.isRead">
+                        @if (item.linkUrl) {
+                          <a [routerLink]="item.linkUrl" (click)="closeNotifications(); closeNav()">
+                            <span class="notification-message">{{ item.message }}</span>
+                            <time class="notification-date">{{ item.createdAt | date: 'short' }}</time>
+                          </a>
+                        } @else {
+                          <span class="notification-message">{{ item.message }}</span>
+                          <time class="notification-date">{{ item.createdAt | date: 'short' }}</time>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            }
+          </li>
+          <li>
+            <span class="navbar-link navbar-user">Ćao, {{ auth.currentUser()?.displayName }}</span>
+          </li>
+          <li>
+            <button type="button" class="navbar-link hover-1 navbar-logout" (click)="logout()">Logout</button>
+          </li>
+        } @else {
+          <li>
+            <a routerLink="/login" class="navbar-link hover-1" (click)="closeNav()">Login</a>
+          </li>
+        }
+      </ul>
+
+      <p class="copyright-text">Copyright 2024 © Luka Vukovic.</p>
+    </nav>
+
+    <button class="nav-open-btn" aria-label="open menu" (click)="toggleNav()">
+      <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
+    </button>
+  </div>
+</header>

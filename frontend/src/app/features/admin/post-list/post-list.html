@@ -1,0 +1,86 @@
+<section class="admin-section">
+  <header class="admin-section-header">
+    <h1 class="admin-title">Postovi</h1>
+    <a routerLink="/admin/posts/new" class="admin-btn admin-btn-primary">+ Novi post</a>
+  </header>
+
+  <form class="admin-search" (ngSubmit)="submitSearch()">
+    <input
+      type="search"
+      name="search"
+      placeholder="Pretraga po naslovu..."
+      [(ngModel)]="search"
+    />
+    <button type="submit" class="admin-btn">Pretraži</button>
+  </form>
+
+  @if (error()) {
+    <p class="admin-error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="admin-text">Učitavanje...</p>
+  } @else if (posts().length === 0) {
+    <p class="admin-text">Nema postova.</p>
+  } @else {
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Naslov</th>
+            <th>Status</th>
+            <th>Kategorija</th>
+            <th>Objavljen</th>
+            <th>Pregledi</th>
+            <th class="admin-table-actions">Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (post of posts(); track post.id) {
+            <tr>
+              <td>{{ post.title }}</td>
+              <td>
+                <span class="admin-badge" [class.admin-badge-published]="post.status === 'Published'">
+                  {{ post.status === 'Published' ? 'Objavljen' : 'Nacrt' }}
+                </span>
+              </td>
+              <td>{{ post.categoryName ?? '—' }}</td>
+              <td>{{ post.publishedAt ? (post.publishedAt | date: 'dd.MM.yyyy') : '—' }}</td>
+              <td>{{ post.viewCount }}</td>
+              <td class="admin-table-actions">
+                <a [routerLink]="['/admin/posts', post.id, 'edit']" class="admin-btn admin-btn-sm">Izmeni</a>
+
+                @if (post.status !== 'Published') {
+                  <button type="button" class="admin-btn admin-btn-sm admin-btn-success" (click)="togglePublish(post)">
+                    Objavi
+                  </button>
+                }
+
+                <button type="button" class="admin-btn admin-btn-sm admin-btn-danger" (click)="deletePost(post)">
+                  Obriši
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages() > 1) {
+      <div class="admin-pagination">
+        <button type="button" class="admin-btn admin-btn-sm" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+          ‹ Prethodna
+        </button>
+        <span class="admin-text">Strana {{ page() }} / {{ totalPages() }}</span>
+        <button
+          type="button"
+          class="admin-btn admin-btn-sm"
+          [disabled]="page() >= totalPages()"
+          (click)="goToPage(page() + 1)"
+        >
+          Sledeća ›
+        </button>
+      </div>
+    }
+  }
+</section>

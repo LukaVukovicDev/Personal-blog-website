@@ -1,0 +1,75 @@
+<section class="admin-section">
+  <header class="admin-section-header">
+    <h1 class="admin-title">{{ isEdit() ? 'Izmena posta' : 'Novi post' }}</h1>
+    <a routerLink="/admin/posts" class="admin-btn">← Nazad na listu</a>
+  </header>
+
+  @if (error()) {
+    <p class="admin-error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="admin-text">Učitavanje...</p>
+  } @else {
+    <form class="admin-form" [formGroup]="form" (ngSubmit)="submit()">
+      <label class="admin-field">
+        <span>Naslov</span>
+        <input type="text" formControlName="title" />
+        @if (form.controls.title.invalid && form.controls.title.touched) {
+          <small class="admin-field-error">Naslov mora imati bar 3 karaktera.</small>
+        }
+      </label>
+
+      <label class="admin-field">
+        <span>Kratak opis (excerpt)</span>
+        <textarea formControlName="excerpt" rows="3"></textarea>
+        @if (form.controls.excerpt.invalid && form.controls.excerpt.touched) {
+          <small class="admin-field-error">Opis je obavezan (maks. 280 karaktera).</small>
+        }
+      </label>
+
+      <label class="admin-field">
+        <span>Sadržaj (HTML)</span>
+        <textarea formControlName="contentHtml" rows="14" class="admin-field-code"></textarea>
+        @if (form.controls.contentHtml.invalid && form.controls.contentHtml.touched) {
+          <small class="admin-field-error">Sadržaj je obavezan.</small>
+        }
+      </label>
+
+      <div class="admin-form-row">
+        <label class="admin-field">
+          <span>Naslovna slika (URL)</span>
+          <input type="text" formControlName="coverImageUrl" placeholder="assets/images/..." />
+        </label>
+
+        <label class="admin-field">
+          <span>Kategorija</span>
+          <select formControlName="categoryId">
+            <option value="">— bez kategorije —</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <label class="admin-field">
+        <span>Tagovi (odvojeni zarezom)</span>
+        <input type="text" formControlName="tagNames" placeholder="linux, ctf, writeups" />
+      </label>
+
+      @if (!isEdit()) {
+        <label class="admin-checkbox">
+          <input type="checkbox" formControlName="publish" />
+          <span>Objavi odmah</span>
+        </label>
+      } @else if (currentStatus() === 'Draft') {
+        <p class="admin-hint">Post je trenutno nacrt — objavi ga sa liste postova.</p>
+      }
+
+      <button type="submit" class="admin-btn admin-btn-primary" [disabled]="submitting()">
+        {{ submitting() ? 'Čuvanje…' : 'Sačuvaj' }}
+      </button>
+    </form>
+  }
+</section>
